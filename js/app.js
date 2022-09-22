@@ -1,5 +1,11 @@
  const resultado = document.querySelector('#resultado');
  const formulario = document.querySelector('#formulario');
+ const paginacionDiv = document.querySelector('#paginacion');
+
+
+ const registrosPorPagina = 40;
+ let totalPaginas;
+ let iterador;
 
  window.onload = () => {
     formulario.addEventListener('submit', validarFormulario);
@@ -47,17 +53,35 @@
 
  function buscarImagenes(termino){
         const key = '30064309-efd6ea21932957ec7c9d5f137';
-        const url = `https://pixabay.com/api/?key=${key}&q=${termino}`;
+        const url = `https://pixabay.com/api/?key=${key}&q=${termino}&per_page=${registrosPorPagina}`;
 
         fetch(url)
         .then(respuesta => respuesta.json())
         .then(resultado => {
+            totalPaginas = calcularPaginas(resultado.totalHits);
+            
             mostrarImagenes(resultado.hits);
         })
  }
 
+ // Generador que va a registrar la cantidad de elementos de acuerdo a las paginas
+ function *crearPaginador(total) {
+    console.log(total)
+    for(let i = 1; i <= total; i++){
+        yield i;
+    }
+ }
+
+
+
+function calcularPaginas(total) {
+    return parseInt(Math.ceil(total / registrosPorPagina));
+}
+
+
+
  function mostrarImagenes(imagenes){
-    console.log(imagenes);
+    
 
     while(resultado.firstChild){
         resultado.removeChild(resultado.firstChild);
@@ -88,7 +112,38 @@
     
 `;
 
-    })
+});
+
+// Limpiar el paginador previo
+while(paginacionDiv.firstChild){
+    paginacionDiv.removeChild(paginacionDiv.firstChild)
+}
+
+// Generamos el nuevo Html
 
 
+imprimirPaginador();
+
+}
+
+
+function imprimirPaginador(){
+    iterador = crearPaginador(totalPaginas);
+
+    while(true){
+        const {value, done} = iterador.next();
+        if(done) return;
+
+        // Caso contrario, genera un boton por  cada elemento en el  generador
+        const boton = document.createElement('a');
+        boton.href = '#';
+        boton.dataset.pagina = value;
+        boton.textContent = value;
+        boton.classList.add('siguiente', 'mx-auto', 'bg-yellow-400', 'px-4', 'py-1', 'mr-2', 'font-bold', 'mb-4', 'uppercase', 'rounded');
+        
+        paginacionDiv.appendChild(boton);
+        
+   
+   
+    }
 }
