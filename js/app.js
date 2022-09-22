@@ -11,10 +11,12 @@
     const terminoBusqueda = document.querySelector('#termino').value;
 
     if(terminoBusqueda === ''){
-        console.log('Agrega un termino de busqueda');
+        mostrarAlerta('Agrega un termino de busqueda');
         return;
     }
 
+    buscarImagenes(terminoBusqueda);
+        
  }
 
  function mostrarAlerta(mensaje){
@@ -42,3 +44,25 @@
     
 
  }
+
+ function buscarImagenes(termino){
+        const key = '30064309-efd6ea21932957ec7c9d5f137';
+        const url = `https://pixabay.com/api/?key=${key}&${termino}`;
+
+        fetch(url)
+        .then(respuesta => respuesta.json())
+        .then(resultado => {
+            mostrarImagenes(resultado.hits);
+        })
+ }
+
+ function mostrarImagenes(imagenes){
+    console.log(imagenes);
+
+    while(resultado.firstChild){
+        resultado.removeChild(resultado.firstChild);
+    } 
+
+    //iterar sobre el arreglo de imagenes y construir elk HTML
+
+}
